@@ -65,12 +65,16 @@ def drawLetterGrid():
 
 
 def printLetter(s, x, y, rectSize):
-    font = pg.font.Font('me/sean/wordlebot/assets/arial.ttf', 32)
-    text = font.render(s.upper(), True, BLACK, GRAY)
-    textRect = text.get_rect()
-
-    textRect.center = (x + rectSize//2, y + rectSize//2)
-    SCREEN.blit(text, textRect)
+    if s == "":
+        rect1 = pg.Rect(x, y, rectSize, rectSize)
+        pg.draw.rect(SCREEN, GRAY, rect1)
+        rect2 = pg.Rect(x, y, rectSize, rectSize)
+        pg.draw.rect(SCREEN, BLACK, rect2, 1)
+    else:
+        text = gameassets.FONT.render(s.upper(), True, BLACK, GRAY)
+        textRect = text.get_rect()
+        textRect.center = (x + rectSize//2, y + rectSize//2)
+        SCREEN.blit(text, textRect)
     
 
 def listToString(s):
@@ -87,10 +91,6 @@ def checkIfValid(s):
         return True
     else:
         return False
-
-def updateCoords():
-    COLUMNCOORDS = (2*MAINBLOCKSIZE)//3 + COLUMN*MAINBLOCKSIZE
-    ROWCOORDS = ((WIDTH - 5*MAINBLOCKSIZE)//2) + ROW*MAINBLOCKSIZE
 
 
 #gameloop
@@ -119,10 +119,10 @@ if __name__ == "__main__":
                         if ROW == 0:
                             pass
                         else:
-                            ROW -=1
+                            ROW = ROW - 1
                             GRID[COLUMN][ROW] = ""
-                            updateCoords()
-                            printLetter(" ", ROWCOORDS, COLUMNCOORDS, MAINBLOCKSIZE)
+                            ROWCOORDS = ((WIDTH - 5*MAINBLOCKSIZE)//2) + ROW*MAINBLOCKSIZE
+                            printLetter("", ROWCOORDS, COLUMNCOORDS, MAINBLOCKSIZE)
                         break
                     case 13:
                         if(ROW == 5):
@@ -130,7 +130,8 @@ if __name__ == "__main__":
                                 print("Valid")
                                 COLUMN += 1
                                 ROW = 0
-                                updateCoords()
+                                COLUMNCOORDS = (2*MAINBLOCKSIZE)//3 + COLUMN*MAINBLOCKSIZE
+                                ROWCOORDS = ((WIDTH - 5*MAINBLOCKSIZE)//2) + ROW*MAINBLOCKSIZE
                                 
                                 
                             else:
@@ -147,7 +148,8 @@ if __name__ == "__main__":
                                 GRID[COLUMN][ROW] = s
                                 printLetter(s, ROWCOORDS, COLUMNCOORDS, MAINBLOCKSIZE)
                                 ROW += 1
-                                updateCoords()
+                                COLUMNCOORDS = (2*MAINBLOCKSIZE)//3 + COLUMN*MAINBLOCKSIZE
+                                ROWCOORDS = ((WIDTH - 5*MAINBLOCKSIZE)//2) + ROW*MAINBLOCKSIZE
                         break
                 
             if event.type == pg.QUIT:
