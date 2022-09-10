@@ -8,6 +8,7 @@ SIZE = WIDTH, HEIGHT = 600, 700
 MAINBLOCKSIZE = math.floor(math.sqrt(HEIGHT*WIDTH*.013))
 GRID = [['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', '']]
 ALPHABET = list("abcdefghijklmnopqrstuvwxyz")
+ALPHABETQWERTY = list("qwertyuiopasdfghjklzxcvbnm")
 
 ROW = 0
 COLUMN = 0
@@ -44,20 +45,20 @@ def drawLetterGrid():
 
     counter = 0
     for x in range(xmargin1, xmargin1 + gridWidth1, blockSize):
-        printLetter(ALPHABET[counter], x, y, blockSize)
+        printLetter(ALPHABETQWERTY[counter], x, y, blockSize)
         counter +=1
         rect = pg.Rect(x, y, blockSize, blockSize)
         pg.draw.rect(SCREEN, BLACK, rect, 1) 
 
 
     for x in range(xmargin2, xmargin2 + gridWidth2, blockSize):
-        printLetter(ALPHABET[counter], x, y + blockSize, blockSize)
+        printLetter(ALPHABETQWERTY[counter], x, y + blockSize, blockSize)
         counter +=1
         rect = pg.Rect(x, y + blockSize, blockSize, blockSize)
         pg.draw.rect(SCREEN, BLACK, rect, 1) 
 
     for x in range(xmargin3, xmargin3 + gridWidth3, blockSize):
-        printLetter(ALPHABET[counter], x, y + 2*blockSize, blockSize)
+        printLetter(ALPHABETQWERTY[counter], x, y + 2*blockSize, blockSize)
         counter +=1
         rect = pg.Rect(x, y + 2*blockSize, blockSize, blockSize)
         pg.draw.rect(SCREEN, BLACK, rect, 1) 
