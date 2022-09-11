@@ -57,7 +57,7 @@ def checkWord(sol, ans):
             val = solLetterCounts.get(letter) - 1
             solLetterCounts.pop(letter)
             solLetterCounts.update({letter: val})
-            print(solLetterCounts)
+
 
     for i in range(0, 5):
         letter = gArr[i]
