@@ -1,0 +1,4 @@
+
+CURRENTPOSSIBLESOLUTIONS = []
+
+def checkIfWordIsPossible():
