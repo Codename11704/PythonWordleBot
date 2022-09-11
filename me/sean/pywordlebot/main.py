@@ -155,7 +155,6 @@ def paintResults(colors, guess):
     gArr = list(guess)
     
     for i in range(0, 5):
-        print(i)
         color = GRAY
         match colors[i]:
             case 0:
