@@ -5,7 +5,7 @@ This program is a fully functional wordle program
 """
 import pygame as pg
 import math
-import gameassets
+import gameassets as assets
 import wordchecker as wc
 
 #Window Constants
@@ -22,6 +22,7 @@ ALPHCOLOR = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 ROW = 0
 COLUMN = 0
 
+#Coordinates of current letter
 ROWCOORDS = ((WIDTH - 5*MAINBLOCKSIZE)//2) + ROW*MAINBLOCKSIZE
 COLUMNCOORDS = (2*MAINBLOCKSIZE)//3 + COLUMN*MAINBLOCKSIZE
 
@@ -140,7 +141,7 @@ def printLetter(s, x, y, rectSize, color):
         rect2 = pg.Rect(x, y, rectSize, rectSize)
         pg.draw.rect(SCREEN, BLACK, rect2, 1)
     else:
-        text = gameassets.LETTERFONT.render(s.upper(), True, BLACK, color)
+        text = assets.LETTERFONT.render(s.upper(), True, BLACK, color)
         textRect = text.get_rect()
         textRect.center = (x + rectSize//2, y + rectSize//2)
         SCREEN.blit(text, textRect)
@@ -164,7 +165,7 @@ def paintResults(colors, guess):
             case 2:
                 color = GREEN
         
-        text = gameassets.LETTERFONT.render(gArr[i].upper(), True, BLACK, color)
+        text = assets.LETTERFONT.render(gArr[i].upper(), True, BLACK, color)
         x = ((WIDTH - 5*MAINBLOCKSIZE)//2) + i*MAINBLOCKSIZE
 
         rect1 = pg.Rect(x, COLUMNCOORDS, MAINBLOCKSIZE, MAINBLOCKSIZE)
@@ -203,7 +204,7 @@ def displayMessage(message):
     """
     rect1 = pg.Rect(0, MAINBLOCKSIZE//3-16, WIDTH, 16)
     pg.draw.rect(SCREEN, GRAY, rect1)
-    text = gameassets.MESSAGEFONT.render(message, True, BLACK, GRAY)
+    text = assets.MESSAGEFONT.render(message, True, BLACK, GRAY)
     textRect = text.get_rect()
     textRect.center = (WIDTH//2, MAINBLOCKSIZE//3-8)
     SCREEN.blit(text, textRect)
@@ -226,7 +227,7 @@ def checkIfValid(s):
     Checks if a given word is a valid wordle answer
     :param s: The word to be checked
     """
-    if gameassets.WORDS.__contains__(str(s).upper()):
+    if assets.WORDS.__contains__(str(s).upper()):
         return True
     else:
         return False
@@ -236,9 +237,9 @@ if __name__ == "__main__":
     #Initialize
     global SCREEN
     pg.init()
-    gameassets.init()
+    assets.init()
     pg.display.set_caption("Wordle Bot")
-    pg.display.set_icon(gameassets.ICON)
+    pg.display.set_icon(assets.ICON)
     SCREEN = pg.display.set_mode(SIZE)
     SCREEN.fill(GRAY)
     drawMainGrid()
@@ -250,6 +251,10 @@ if __name__ == "__main__":
     while running:
         #EventQueue
         for event in pg.event.get():
+            #If game is quit
+            if event.type == pg.QUIT:
+                running = False
+                
             #EndsGame if either win or lose
             if flag:
                 #Runs if key is pressed
@@ -272,7 +277,7 @@ if __name__ == "__main__":
                                 #Checks if valid wordle answer
                                 if(checkIfValid(listToString(GRID[COLUMN]))):
                                     wordle = listToString(GRID[COLUMN])
-                                    colors = wc.checkWord(gameassets.WORDLEWORD, wordle.upper())
+                                    colors = wc.checkWord(assets.WORDLEWORD, wordle.upper())
                                     paintResults(colors, wordle)
                                     ALPHCOLOR = updateGridColors(colors, wordle)
                                     drawLetterGrid()
@@ -283,18 +288,18 @@ if __name__ == "__main__":
                                         flag = False
                                     #Checks if lost
                                     elif COLUMN == 5:
-                                        displayMessage("You Lose, the word was: " + gameassets.WORDLEWORD)
+                                        displayMessage("You Lose, the word was: " + assets.WORDLEWORD)
                                         flag == False
-
-                                    #Update coordinates
-                                    COLUMN += 1
-                                    ROW = 0
-                                    COLUMNCOORDS = (2*MAINBLOCKSIZE)//3 + COLUMN*MAINBLOCKSIZE
-                                    ROWCOORDS = ((WIDTH - 5*MAINBLOCKSIZE)//2) + ROW*MAINBLOCKSIZE
-                                
+                                    else:
+                                        #Update coordinates
+                                        COLUMN += 1
+                                        ROW = 0
+                                        COLUMNCOORDS = (2*MAINBLOCKSIZE)//3 + COLUMN*MAINBLOCKSIZE
+                                        ROWCOORDS = ((WIDTH - 5*MAINBLOCKSIZE)//2) + ROW*MAINBLOCKSIZE
+                                        
                                 #Displayed if word isn't a wordle word
                                 else:
-                                    displayMessage("Invalid Word")
+                                    displayMessage("Invalid Word")               
                             #Displayed if row isn't filled
                             else:
                                 displayMessage("Not Enough Letters")
@@ -311,7 +316,5 @@ if __name__ == "__main__":
                                     ROW += 1
                                     COLUMNCOORDS = (2*MAINBLOCKSIZE)//3 + COLUMN*MAINBLOCKSIZE
                                     ROWCOORDS = ((WIDTH - 5*MAINBLOCKSIZE)//2) + ROW*MAINBLOCKSIZE
-            #If game is quit
-            if event.type == pg.QUIT:
-                running = False
+            
             pg.display.update()

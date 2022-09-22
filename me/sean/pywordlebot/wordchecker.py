@@ -19,24 +19,8 @@ def letterCounts(word):
             letterCount.update({letter: val})
         else:
             letterCount.update({letter: 1})
-    return letterCount
+    return letterCount  
 
-def lettersBefore(word, index):
-    """
-    Determines how many times the letter at index appears before it
-    :param word: The word to be check
-    :param index: The index of the letter that is checked
-    """
-    wordAsArr = list(word)
-    letter = wordAsArr[index]
-    num = 0
-    
-    for i in range (0, index):
-        if wordAsArr[i] == letter:
-            num += 1
-
-    return num   
-   
 
 def checkWord(sol, ans):
     """
@@ -63,7 +47,7 @@ def checkWord(sol, ans):
         letter = gArr[i]
         if colors[i] != 2:
             if list(sol).count(letter) > 0:
-                #print(solLetterCounts.get(letter))
+                
                 if solLetterCounts.get(letter) > 0:
                     colors[i] = 1
                     val = solLetterCounts.get(letter) - 1
