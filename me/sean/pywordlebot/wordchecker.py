@@ -28,6 +28,7 @@ def checkWord(sol, ans):
     and returns an array of colors to be printed on the screen
     :param sol: The wordle solution
     :param ans: The answer given by the user
+    :returns: Array of colors that coralate with the letters of the word
     """
     colors = [0, 0, 0, 0 ,0]
     solArr = list(sol)
