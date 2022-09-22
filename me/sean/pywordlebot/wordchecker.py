@@ -9,6 +9,7 @@ def letterCounts(word):
     """
     Gets the number of times each letter occurs in the word and returns it as a library
     :param word: The word to have it's letters counted
+    :returns: an int of how many times a letter appears in a word
     """
     letterCount = {}
 
@@ -26,6 +27,7 @@ def lettersBefore(word, index):
     Determines how many times the letter at index appears before it
     :param word: The word to be check
     :param index: The index of the letter that is checked
+    :returns: Number of times the letter appears before itself 
     """
     wordAsArr = list(word)
     letter = wordAsArr[index]
@@ -44,6 +46,7 @@ def checkWord(sol, ans):
     and returns an array of colors to be printed on the screen
     :param sol: The wordle solution
     :param ans: The answer given by the user
+    :returns: Array of colors that coralate with the letters of the word
     """
     colors = [0, 0, 0, 0 ,0]
     solArr = list(sol)

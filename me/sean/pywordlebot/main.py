@@ -185,6 +185,7 @@ def updateGridColors(colors, word):
     Updates the colors in the lower alphabet grid
     :param colors: The colors that resulted from the users guess
     :param word: The users guess
+    :returns: Array of colors for the wordle grid
     """
     wordLetters = list(word)
     colorGrid = ALPHCOLOR
@@ -230,7 +231,6 @@ def checkIfValid(s):
         return True
     else:
         return False
-
 
 if __name__ == "__main__":
     #Initialize
