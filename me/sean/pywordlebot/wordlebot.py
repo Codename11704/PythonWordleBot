@@ -25,7 +25,7 @@ def updateList(word, results, cps):
                         isPossible = False
             i += 1
         if isPossible == False:
-            listBuffer.pop(listBuffer.indexOf(possibility))
+            listBuffer.pop(listBuffer.index(possibility))
     print(listBuffer)
     return listBuffer
 
