@@ -40,13 +40,11 @@ def updateList(word, results, cps):
                 case 2:
                     if word[ind] != possibility[ind]:
                         isPossible = False
-            ind += 1
-        if not isPossible:
-            cps.remove(possibility)
-
-    if len(cps) == 0:
-        return copy
-    return cps
+            i += 1
+        if isPossible == False:
+            listBuffer.pop(listBuffer.indexOf(possibility))
+    print(listBuffer)
+    return listBuffer
 
 
 def main():
