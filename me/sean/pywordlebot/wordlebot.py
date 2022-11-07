@@ -2,32 +2,51 @@
 import wordchecker as wc
 import gameassets as ga
 import pygame as pg
+import numpy
 
 CURRENTPOSSIBLESOLUTIONS = []
 
 def updateList(word, results, cps):
-    listBuffer = cps
-    print(listBuffer.__len__())
-    print("Running")
-    ind = 0
-    for possibility in listBuffer:
-        i = 0
+    wordLetterCounts = wc.letterCounts(word)
+    copy = cps[:]
+
+    
+    for possibility in cps[:]:
+        possLetterCounts = wc.letterCounts(possibility)
+
+
+        ind = 0
         isPossible = True
-        while i < 5 and isPossible == True:
-            match results[i]:
+        while ind < 5 and isPossible == True:
+
+            match results[ind]:
                 case 0:
-                    if word[i] == possibility[i]:
+                    if word[ind] == possibility[ind]:
                         isPossible = False
+                    
                 case 1:
-                    pass
-                case 2:
-                    if word[i] != possibility[i]:
+                    ch = word[ind]
+                    if ch == possibility[ind]:
                         isPossible = False
-            i += 1
-        if isPossible == False:
-            listBuffer.pop(listBuffer.indexOf(possibility))
-    print(listBuffer)
-    return listBuffer
+                    else:
+                        if possibility.count(ch) > 0:
+                            if possLetterCounts.get(ch) > 0:
+                                possLetterCounts.update({ch: (possLetterCounts.get(ch)-1)})
+                            else:
+                                isPossible = False
+                        else:
+                            isPossible = False
+
+                case 2:
+                    if word[ind] != possibility[ind]:
+                        isPossible = False
+            ind += 1
+        if not isPossible:
+            cps.remove(possibility)
+
+    if len(cps) == 0:
+        return copy
+    return cps
 
 
 def main():
@@ -35,13 +54,12 @@ def main():
     pg.init()
     ga.init()
     print(ga.WORDLEWORD)
-    #CURRENTPOSSIBLESOLUTIONS = ga.WORDS
-    CURRENTPOSSIBLESOLUTIONS = ["CXXXX", "XRXXX", "XXAXX", "XXXNX", "XXXXE"]
+    CURRENTPOSSIBLESOLUTIONS = ga.WORDS
     print(CURRENTPOSSIBLESOLUTIONS.__len__())
     res = wc.checkWord(ga.WORDLEWORD, testWord)
     print(res)
     CURRENTPOSSIBLESOLUTIONS = updateList(testWord, res, CURRENTPOSSIBLESOLUTIONS)
-    #print(CURRENTPOSSIBLESOLUTIONS)
+    print(CURRENTPOSSIBLESOLUTIONS)
     print(CURRENTPOSSIBLESOLUTIONS.__len__())
     
 

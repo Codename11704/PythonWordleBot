@@ -7,24 +7,39 @@ import pygame as pg
 import math
 import gameassets as assets
 import wordchecker as wc
+from dataclasses import *
+
+#dataclass that described the current board
+@dataclass
+class Board:
+    grid: list
+    currentRow: int
+    currentColumn: int
+    columCoord: int
+    rowCoord:int
+
+    def createNewBoard():
+        emptyGrid = [['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', '']]
+        col = ((WIDTH - 5*MAINBLOCKSIZE)//2)
+        row = (2*MAINBLOCKSIZE)//3
+        return Board(emptyGrid, 0, 0, col, row)
+    
+    def updateCoordinates(self):
+        self.columCoord = ((WIDTH - 5*MAINBLOCKSIZE)//2) + self.currentColumn*MAINBLOCKSIZE
+        self.rowCoord = (2*MAINBLOCKSIZE)//3 + self.currentRow*MAINBLOCKSIZE
+
+
+
+
 
 #Window Constants
 SIZE = WIDTH, HEIGHT = 600, 700
 MAINBLOCKSIZE = math.floor(math.sqrt(HEIGHT*WIDTH*.013))
 
 #Arrays for Colors and such else
-GRID = [['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', '']]
 ALPHABET = list("abcdefghijklmnopqrstuvwxyz")
 ALPHABETQWERTY = list("qwertyuiopasdfghjklzxcvbnm")
 ALPHCOLOR = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
-
-#Constants for drawing
-ROW = 0
-COLUMN = 0
-
-#Coordinates of current letter
-ROWCOORDS = ((WIDTH - 5*MAINBLOCKSIZE)//2) + ROW*MAINBLOCKSIZE
-COLUMNCOORDS = (2*MAINBLOCKSIZE)//3 + COLUMN*MAINBLOCKSIZE
 
 #Colors
 BLACK = (0, 0, 0)
@@ -147,7 +162,7 @@ def printLetter(s, x, y, rectSize, color):
         SCREEN.blit(text, textRect)
 
 
-def paintResults(colors, guess):
+def paintResults(colors, guess, board):
     """
     Paints the results of the word check
     :param colors: An array that contains the color of each block
@@ -168,14 +183,14 @@ def paintResults(colors, guess):
         text = assets.LETTERFONT.render(gArr[i].upper(), True, BLACK, color)
         x = ((WIDTH - 5*MAINBLOCKSIZE)//2) + i*MAINBLOCKSIZE
 
-        rect1 = pg.Rect(x, COLUMNCOORDS, MAINBLOCKSIZE, MAINBLOCKSIZE)
+        rect1 = pg.Rect(x, board.rowCoord, MAINBLOCKSIZE, MAINBLOCKSIZE)
         pg.draw.rect(SCREEN, color, rect1)
-        rect2 = pg.Rect(x, COLUMNCOORDS, MAINBLOCKSIZE, MAINBLOCKSIZE)
+        rect2 = pg.Rect(x, board.rowCoord, MAINBLOCKSIZE, MAINBLOCKSIZE)
         pg.draw.rect(SCREEN, BLACK, rect2, 1)
 
 
         textRect = text.get_rect()
-        textRect.center = (x + MAINBLOCKSIZE//2, COLUMNCOORDS + MAINBLOCKSIZE//2)
+        textRect.center = (x + MAINBLOCKSIZE//2, board.rowCoord + MAINBLOCKSIZE//2)
         textRect.width = MAINBLOCKSIZE
         textRect.height = MAINBLOCKSIZE
         SCREEN.blit(text, textRect)
@@ -233,9 +248,10 @@ def checkIfValid(s):
     else:
         return False
 
-if __name__ == "__main__":
+def main():
     #Initialize
     global SCREEN
+    board = Board.createNewBoard()
     pg.init()
     assets.init()
     pg.display.set_caption("Wordle Bot")
@@ -246,6 +262,7 @@ if __name__ == "__main__":
     drawLetterGrid()
 
     #GameLoop
+    win = False
     running = True
     flag = True
     while running:
@@ -263,41 +280,41 @@ if __name__ == "__main__":
                     match event.key:
                         #BackSpace
                         case 8:
-                            if ROW == 0:
+                            if board.currentColumn == 0:
                                 pass
                             else:
-                                ROW = ROW - 1
-                                GRID[COLUMN][ROW] = ""
-                                ROWCOORDS = ((WIDTH - 5*MAINBLOCKSIZE)//2) + ROW*MAINBLOCKSIZE
-                                printLetter("", ROWCOORDS, COLUMNCOORDS, MAINBLOCKSIZE, BLACK)
+                                board.currentColumn = board.currentColumn - 1
+                                board.grid[board.currentRow][board.currentColumn] = ""
+                                board.updateCoordinates()
+                                printLetter("", board.columCoord, board.rowCoord, MAINBLOCKSIZE, BLACK)
                         #Enter
                         case 13:
                             #Check if row is filled
-                            if(ROW == 5):
+                            if(board.currentColumn == 5):
                                 #Checks if valid wordle answer
-                                if(checkIfValid(listToString(GRID[COLUMN]))):
-                                    wordle = listToString(GRID[COLUMN])
+                                if(checkIfValid(listToString(board.grid[board.currentRow]))):
+                                    wordle = listToString(board.grid[board.currentRow])
                                     colors = wc.checkWord(assets.WORDLEWORD, wordle.upper())
-                                    paintResults(colors, wordle)
-                                    ALPHCOLOR = updateGridColors(colors, wordle)
+                                    paintResults(colors, wordle, board)
                                     drawLetterGrid()
 
                                     #Checks if won
                                     if colors == [2, 2, 2, 2, 2]:
                                         displayMessage("You Won")
                                         flag = False
+                                        win = True
                                     #Checks if lost
-                                    elif COLUMN == 5:
+                                    elif board.currentRow == 5:
                                         displayMessage("You Lose, the word was: " + assets.WORDLEWORD)
                                         flag == False
+                                        win = False
                                     else:
                                         #Update coordinates
-                                        COLUMN += 1
-                                        ROW = 0
-                                        COLUMNCOORDS = (2*MAINBLOCKSIZE)//3 + COLUMN*MAINBLOCKSIZE
-                                        ROWCOORDS = ((WIDTH - 5*MAINBLOCKSIZE)//2) + ROW*MAINBLOCKSIZE
+                                        board.currentRow += 1
+                                        board.currentColumn = 0
+                                        board.updateCoordinates()
                                         
-                                #Displayed if word isn't a wordle word
+                                #Displayed if word isn't a wonardle word
                                 else:
                                     displayMessage("Invalid Word")               
                             #Displayed if row isn't filled
@@ -309,12 +326,14 @@ if __name__ == "__main__":
                             #Checks if letter
                             if(event.key >= 97 and event.key <= 122):
                                 #Checks if row is not filled
-                                if(ROW != 5):
+                                if(board.currentColumn != 5):
                                     s = ALPHABET[event.key - 97]
-                                    GRID[COLUMN][ROW] = s
-                                    printLetter(s, ROWCOORDS, COLUMNCOORDS, MAINBLOCKSIZE, GRAY)
-                                    ROW += 1
-                                    COLUMNCOORDS = (2*MAINBLOCKSIZE)//3 + COLUMN*MAINBLOCKSIZE
-                                    ROWCOORDS = ((WIDTH - 5*MAINBLOCKSIZE)//2) + ROW*MAINBLOCKSIZE
+                                    board.grid[board.currentRow][board.currentColumn] = s
+                                    printLetter(s, board.columCoord, board.rowCoord, MAINBLOCKSIZE, GRAY)
+                                    board.currentColumn += 1
+                                    board.updateCoordinates()
             
             pg.display.update()
+    return win
+if __name__ == "__main__":
+    main()
