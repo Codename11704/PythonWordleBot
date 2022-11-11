@@ -17,15 +17,6 @@ def updateList(word, results, cps):
     if len(newList) == 0:
         return cps
     return newList
-                            
-
-                    
-
-
-                
-                
-
-
 
 def main():
     testWord = "CRANE"

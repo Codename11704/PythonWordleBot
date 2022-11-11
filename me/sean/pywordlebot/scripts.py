@@ -1,8 +1,47 @@
+import json
 import pygame as pg
 import gameassets as ga
 import wordchecker as wc
 import numpy as np
 import bottest as bt
+from dataclasses import *
+
+@dataclass
+class multiDict:
+    dict: dict
+    
+    def addItem(self, ind1, ind2, val):
+        dict = self.dict
+        if ind1 in dict.keys():
+            self.dict.get(ind1).update({ind2 : val})
+        else:
+            self.dict.update({ind1 : {ind2 : val}})
+            
+    def getItem(self, ind1, ind2):
+        dict1 = self.dict
+        dict2 = dict1.get(ind1)
+        val = dict2.get(ind2)
+        return val
+    
+    def getIndices(self, ind1, val):
+        keys = []
+        dict = self.dict.get(ind1)
+        for key in dict.keys:
+            if dict.get(key) == val:
+                keys.append(key)
+                
+    def toDict(self):
+        return { "data" : self.dict}
+    
+    def from_dict(d):
+        return multiDict(d.get("data"))
+        
+        
+        
+
+
+
+
 
 def ternaryToDecimal(list):
     n = 0
@@ -14,20 +53,17 @@ def ternaryToDecimal(list):
 
 
 def create_table(l1, l2):
-    comboArray = np.empty((12972, 12972))
-    ind = 0
+    md = multiDict({})
+    prog = 0
     for word1 in l1:
-        ind2 = 0
         for word2 in l2:
             res = wc.checkWord(word1, word2)
-            dec = ternaryToDecimal(res)
-            comboArray[ind, ind2] = dec
-            ind2 +=1
-
-        ind+=1
-        if (ind%130) == 0:
-            print(str((ind/12972)*100) + "%")
-    return comboArray
+            md.addItem(word1, word2, res)
+        prog+=1
+        perc = (prog/len(l1))*100
+        print("Progress: " + str(perc) + "%")
+    return md
+    
 
 
 def main():
@@ -37,35 +73,21 @@ def main2():
     pg.init()
     ga.init()
     list1 = ga.WORDS
-    res = wc.checkWord(list1[234], list1[567])
-    print(list1[234])
-    print(list1[567])
-    print(res)
-
-
-
-    num = ternaryToDecimal(res) 
-    file = open("wordlecombos.txt", 'r') 
-    arr = np.loadtxt(file).astype(np.int64)
-
-
     
-    arr2 = np.asarray(np.where(arr == num)).T.tolist()
-    arr3 = np.asarray(np.where(arr2 == 234)).T.tolist()
+    table = create_table(list1, list1)
+    with open("me\\sean\\pywordlebot\\assets\\map.json", 'w') as f:
+        json.dump(table.toDict(), f)
 
-    newList = []
-    for list in arr3:
-        print(list1[list[1]])
-        print(wc.checkWord(list1[234], list1[list[1]]))
+
+    with open("me\\sean\\pywordlebot\\assets\\map.json", 'r') as f:
+        d = json.load(f)
+        newTable = multiDict.from_dict(d)
+        print(newTable.getItem("helps", "cants"))
     
-
-
-
-
     
 
 
 
 if __name__ == "__main__":
-    main()
+    main2()
     
