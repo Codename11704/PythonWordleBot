@@ -9,47 +9,14 @@ CURRENTPOSSIBLESOLUTIONS = []
 
 def updateList(word, results, cps):
     newList = cps.copy()
-    
-    for possibility in cps:
-        counts = letterCounts(possibility)
-        feesible = True
-        for i in range(5):
-            lett = word[i]
-            if results[i] == 2:
-                if possibility[i] == lett:
-                    val = counts.get(lett)-1
-                    counts.update({lett : val})
-                else:
-                    newList.remove(possibility)
-                    i = 5
-                    feesible = False
-                    break
-            elif results[i] == 0:
-                if possibility[i] == lett:
-                    newList.remove(possibility)
-                    i = 5
-                    feesible = False
-                    break
-        if feesible:
-            for i in range(5):
-                lett = word[i]
-                if results[i] == 1:
-                    if lett in possibility:
-                        if counts.get(lett) == 0:
-                            newList.remove(possibility)
-                            i == 4
-                            break
-                        else:
-                            val = counts.get(lett)-1
-                            counts.update({lett : val})
-                    else:
-                        newList.remove(possibility)
-                        i == 4
-                        break
+
+    for poss in cps:
+        res = wc.checkWord(word, poss)
+        if res != results:
+            newList.remove(poss)
     if len(newList) == 0:
         return cps
-    else:
-        return newList
+    return newList
                             
 
                     

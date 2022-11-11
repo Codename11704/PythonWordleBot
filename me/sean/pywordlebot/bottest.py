@@ -24,41 +24,27 @@ def ternary (n):
         ind-=1
     return res
 
+def safe_log2(x):
+    return math.log2(x) if x > 0 else 0
 
     
 
 
 def bestPossibleAnswer(list):
-    wordData = {}
-    size = len(list)
-    ind = 0
+    bestWord = ""
+    mostData = 0
     for word1 in list[:]:
-        avginfo = 0
-        ind2 = 0
-        while ind2 < 3**5:
-            fakeRes = ternary(ind2)
-            newList = list[:]
-            newList = wb.updateList("WEARY", fakeRes, newList)
-
-            
-            listLen = len(newList)
-            prob = listLen/size
-            info = math.log2(1/prob)
-
-            print("Combination: " + str(fakeRes) + " List After :" + str(listLen) +  " Probability: " + str(listLen/size) + " Information: " + str(info))
-            avginfo = avginfo + (info * prob)
-            ind2+=1
-        wordData.update({"Weary": avginfo})
-
-
-        ind += 1
-        if(ind%130 == 0):
-            print(str(ind%130+1) + "%")
-        print(wordData)
-        
-        
-        
-    return wordData
+        avgInfo = 0
+        for i in range(0, 363):
+            oldList = list[:]
+            res = ternary(i)
+            newList = wb.updateList(word1, res, oldList)
+            prob = len(newList)/len(oldList)
+            avgInfo+= prob*(safe_log2(1/prob))
+        print("Word: " + word1 + " Info: " + str(avgInfo))
+        if avgInfo > mostData:
+            bestWord = word1
+    print("Best Word: " + bestWord)
 
 
 
@@ -74,9 +60,7 @@ def main():
     ga.init()
     init()
     POSSSOL = ga.WORDS
-    print(len(POSSSOL))
-    dataFromWords = bestPossibleAnswer(POSSSOL)
-    print(dataFromWords)
+    bestPossibleAnswer(POSSSOL)
 
 
 

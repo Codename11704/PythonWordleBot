@@ -31,16 +31,7 @@ def create_table(l1, l2):
 
 
 def main():
-    pg.init()
-    ga.init()
-    list1 = ga.WORDS
-    list2 = ga.WORDS
-    
-    combos = create_table(list1, list2)
-
-    file = open("wordlecombos.txt", 'w')
-    np.savetxt(file, combos)
-    file.close()
+    print(ternaryToDecimal([3, 3, 3, 3, 3]))
 
 def main2():
     pg.init()
@@ -76,5 +67,5 @@ def main2():
 
 
 if __name__ == "__main__":
-    main2()
+    main()
     
