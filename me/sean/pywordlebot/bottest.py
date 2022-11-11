@@ -17,13 +17,11 @@ def ternary (n):
     while n:
         n, r = divmod(n, 3)
         nums.append(r)
-
     res = [0, 0, 0, 0, 0]
     ind = 4
     for n in nums:
         res[ind] = n
         ind-=1
-
     return res
 
 
@@ -44,10 +42,11 @@ def bestPossibleAnswer(list):
 
             
             listLen = len(newList)
-            info = math.log2(size/listLen)
             prob = listLen/size
+            info = math.log2(1/prob)
+
             print("Combination: " + str(fakeRes) + " List After :" + str(listLen) +  " Probability: " + str(listLen/size) + " Information: " + str(info))
-            avginfo = avginfo + math.log2(size/listLen)*(listLen/size)
+            avginfo = avginfo + (info * prob)
             ind2+=1
         wordData.update({"Weary": avginfo})
 

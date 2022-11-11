@@ -23,15 +23,11 @@ def create_table(l1, l2):
             dec = ternaryToDecimal(res)
             comboArray[ind, ind2] = dec
             ind2 +=1
-        
-
 
         ind+=1
         if (ind%130) == 0:
             print(str((ind/12972)*100) + "%")
     return comboArray
-
-
 
 
 def main():

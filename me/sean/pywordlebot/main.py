@@ -13,6 +13,7 @@ from dataclasses import *
 @dataclass
 class Board:
     grid: list
+    colorGrid: list
     currentRow: int
     currentColumn: int
     columCoord: int
@@ -22,14 +23,28 @@ class Board:
         emptyGrid = [['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', '']]
         col = ((WIDTH - 5*MAINBLOCKSIZE)//2)
         row = (2*MAINBLOCKSIZE)//3
-        return Board(emptyGrid, 0, 0, col, row)
+        colorGrid = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+        return Board(emptyGrid, colorGrid, 0, 0, col, row)
     
     def updateCoordinates(self):
         self.columCoord = ((WIDTH - 5*MAINBLOCKSIZE)//2) + self.currentColumn*MAINBLOCKSIZE
         self.rowCoord = (2*MAINBLOCKSIZE)//3 + self.currentRow*MAINBLOCKSIZE
 
-
-
+    def updateGridColors(self, colors, word):
+        """
+        Updates the colors in the lower alphabet grid
+        :param colors: The colors that resulted from the users guess
+        :param word: The users guess
+        :returns: Array of colors for the wordle grid
+        """
+        wordLetters = list(word)
+        
+        for x in range(0, 5):
+            ind = ALPHABETQWERTY.index(wordLetters[x])
+            if self.colorGrid[ind] == 2:
+                pass
+            else:
+                self.colorGrid[ind] = colors[x]
 
 
 #Window Constants
@@ -39,7 +54,7 @@ MAINBLOCKSIZE = math.floor(math.sqrt(HEIGHT*WIDTH*.013))
 #Arrays for Colors and such else
 ALPHABET = list("abcdefghijklmnopqrstuvwxyz")
 ALPHABETQWERTY = list("qwertyuiopasdfghjklzxcvbnm")
-ALPHCOLOR = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+
 
 #Colors
 BLACK = (0, 0, 0)
@@ -63,7 +78,7 @@ def drawMainGrid():
             pg.draw.rect(SCREEN, BLACK, rect, 1)
 
 
-def drawLetterGrid():
+def drawLetterGrid(board):
     """
     Draws the grid used to show the status of all the letters
     """
@@ -81,7 +96,7 @@ def drawLetterGrid():
     counter = 0
     for x in range(xmargin1, xmargin1 + gridWidth1, blockSize):
         color = GRAY
-        match ALPHCOLOR[counter]:
+        match board.colorGrid[counter]:
             case -1:
                 color = GRAY
             case 0:
@@ -102,7 +117,7 @@ def drawLetterGrid():
 
     for x in range(xmargin2, xmargin2 + gridWidth2, blockSize):
         color = GRAY
-        match ALPHCOLOR[counter]:
+        match board.colorGrid[counter]:
             case -1:
                 color = GRAY
             case 0:
@@ -121,7 +136,7 @@ def drawLetterGrid():
 
     for x in range(xmargin3, xmargin3 + gridWidth3, blockSize):
         color = GRAY
-        match ALPHCOLOR[counter]:
+        match board.colorGrid[counter]:
             case -1:
                 color = GRAY
             case 0:
@@ -196,22 +211,7 @@ def paintResults(colors, guess, board):
         SCREEN.blit(text, textRect)
 
 
-def updateGridColors(colors, word):
-    """
-    Updates the colors in the lower alphabet grid
-    :param colors: The colors that resulted from the users guess
-    :param word: The users guess
-    :returns: Array of colors for the wordle grid
-    """
-    wordLetters = list(word)
-    colorGrid = ALPHCOLOR
-    for x in range(0, 5):
-        ind = ALPHABETQWERTY.index(wordLetters[x])
-        if colorGrid[ind] == 2:
-            pass
-        else:
-            colorGrid[ind] = colors[x]
-    return colorGrid
+
 
 def displayMessage(message):
     """
@@ -259,7 +259,7 @@ def main():
     SCREEN = pg.display.set_mode(SIZE)
     SCREEN.fill(GRAY)
     drawMainGrid()
-    drawLetterGrid()
+    drawLetterGrid(board)
 
     #GameLoop
     win = False
@@ -296,7 +296,8 @@ def main():
                                     wordle = listToString(board.grid[board.currentRow])
                                     colors = wc.checkWord(assets.WORDLEWORD, wordle.upper())
                                     paintResults(colors, wordle, board)
-                                    drawLetterGrid()
+                                    board.updateGridColors(colors, wordle)
+                                    drawLetterGrid(board)
 
                                     #Checks if won
                                     if colors == [2, 2, 2, 2, 2]:

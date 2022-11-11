@@ -3,48 +3,61 @@ import wordchecker as wc
 import gameassets as ga
 import pygame as pg
 import numpy
+from wordchecker import *
 
 CURRENTPOSSIBLESOLUTIONS = []
 
 def updateList(word, results, cps):
-    wordLetterCounts = wc.letterCounts(word)
-    copy = cps[:]
-
+    newList = cps.copy()
     
-    for possibility in cps[:]:
-        possLetterCounts = wc.letterCounts(possibility)
-
-
-        ind = 0
-        isPossible = True
-        while ind < 5 and isPossible == True:
-
-            match results[ind]:
-                case 0:
-                    if word[ind] == possibility[ind]:
-                        isPossible = False
-                    
-                case 1:
-                    ch = word[ind]
-                    if ch == possibility[ind]:
-                        isPossible = False
-                    else:
-                        if possibility.count(ch) > 0:
-                            if possLetterCounts.get(ch) > 0:
-                                possLetterCounts.update({ch: (possLetterCounts.get(ch)-1)})
-                            else:
-                                isPossible = False
+    for possibility in cps:
+        counts = letterCounts(possibility)
+        feesible = True
+        for i in range(5):
+            lett = word[i]
+            if results[i] == 2:
+                if possibility[i] == lett:
+                    val = counts.get(lett)-1
+                    counts.update({lett : val})
+                else:
+                    newList.remove(possibility)
+                    i = 5
+                    feesible = False
+                    break
+            elif results[i] == 0:
+                if possibility[i] == lett:
+                    newList.remove(possibility)
+                    i = 5
+                    feesible = False
+                    break
+        if feesible:
+            for i in range(5):
+                lett = word[i]
+                if results[i] == 1:
+                    if lett in possibility:
+                        if counts.get(lett) == 0:
+                            newList.remove(possibility)
+                            i == 4
+                            break
                         else:
-                            isPossible = False
+                            val = counts.get(lett)-1
+                            counts.update({lett : val})
+                    else:
+                        newList.remove(possibility)
+                        i == 4
+                        break
+    if len(newList) == 0:
+        return cps
+    else:
+        return newList
+                            
 
-                case 2:
-                    if word[ind] != possibility[ind]:
-                        isPossible = False
-            i += 1
-        if isPossible == False:
-            listBuffer.pop(listBuffer.indexOf(possibility))
-    print(listBuffer)
-    return listBuffer
+                    
+
+
+                
+                
+
 
 
 def main():
