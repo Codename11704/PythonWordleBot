@@ -7,6 +7,8 @@ import pygame as pg
 import math
 import gameassets as assets
 import wordchecker as wc
+import botassets as ba
+import wordlebotManual as wbm
 from dataclasses import *
 
 #dataclass that described the current board
@@ -224,7 +226,28 @@ def displayMessage(message):
     textRect = text.get_rect()
     textRect.center = (WIDTH//2, MAINBLOCKSIZE//3-8)
     SCREEN.blit(text, textRect)
-
+    
+def displayBest(words, info):
+    
+    
+    indent = 40
+    gridWidth = 5*MAINBLOCKSIZE
+    gridHeight = 6*MAINBLOCKSIZE
+    height = gridHeight//10
+    xmargin = (WIDTH - gridWidth)//2
+    ymargin = math.floor(MAINBLOCKSIZE*(2/3))
+    
+    rect = pg.Rect(indent//5, ymargin, xmargin-indent//5, gridHeight + height)       
+    pg.draw.rect(SCREEN, GRAY, rect)
+    i = 0
+    while i < len(words):
+        msg = words[i] + ": " + str(round(info[i], 2))
+        
+        text = assets.MESSAGEFONT.render(msg, True, BLACK, GRAY)
+        textRect = text.get_rect()
+        textRect.topleft = (indent//4, ymargin + i*height)
+        SCREEN.blit(text, textRect)
+        i+=1
 
 def listToString(s):
     """
@@ -260,7 +283,10 @@ def main():
     SCREEN.fill(GRAY)
     drawMainGrid()
     drawLetterGrid(board)
-
+    cps = assets.WORDS[:]
+    data = ba.loadInfo()
+    bestOf = []
+    info = []
     #GameLoop
     win = False
     running = True
@@ -314,6 +340,12 @@ def main():
                                         board.currentRow += 1
                                         board.currentColumn = 0
                                         board.updateCoordinates()
+                                        
+                                        cps = ba.updateList(wordle.upper(), ba.ternaryToDecimal(colors), cps, data)
+                                        (bestOf, info) = ba.bestPossibleAnswer(cps, data)
+                                        print(bestOf)
+                                        displayBest(bestOf, info)
+                                
                                         
                                 #Displayed if word isn't a wonardle word
                                 else:
