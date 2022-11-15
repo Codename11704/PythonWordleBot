@@ -228,8 +228,12 @@ def displayMessage(message):
     SCREEN.blit(text, textRect)
     
 def displayBest(words, info):
-    
-    
+    """Display the best options on the left margin of the scree
+    params:
+        words (list): The top 10 best words sorted from best to worst
+        info (list): The information corresponding to words
+
+    """
     indent = 40
     gridWidth = 5*MAINBLOCKSIZE
     gridHeight = 6*MAINBLOCKSIZE
@@ -283,10 +287,14 @@ def main():
     SCREEN.fill(GRAY)
     drawMainGrid()
     drawLetterGrid(board)
+
+    #Display top words on left margin
     cps = assets.WORDS[:]
     data = ba.loadInfo()
-    bestOf = []
-    info = []
+    bestOf = ba.TOPWORDS
+    info = ba.TOPINFO
+    displayBest(bestOf, info)
+
     #GameLoop
     win = False
     running = True
@@ -341,9 +349,9 @@ def main():
                                         board.currentColumn = 0
                                         board.updateCoordinates()
                                         
+                                        #Display the new best words
                                         cps = ba.updateList(wordle.upper(), ba.ternaryToDecimal(colors), cps, data)
-                                        (bestOf, info) = ba.bestPossibleAnswer(cps, data)
-                                        print(bestOf)
+                                        (bestOf, info) = ba.bestPossibleAnswers(cps, data)
                                         displayBest(bestOf, info)
                                 
                                         
